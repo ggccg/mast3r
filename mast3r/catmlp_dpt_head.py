@@ -7,11 +7,11 @@
 import torch
 import torch.nn.functional as F
 
-import mast3r.utils.path_to_dust3r  # noqa
-from dust3r.heads.postprocess import reg_dense_depth, reg_dense_conf  # noqa
-from dust3r.heads.dpt_head import PixelwiseTaskWithDPT  # noqa
-import dust3r.utils.path_to_croco  # noqa
-from models.blocks import Mlp  # noqa
+from .utils import path_to_dust3r  # noqa
+from ..dust3r.dust3r.heads.postprocess import reg_dense_depth, reg_dense_conf  # noqa
+from ..dust3r.dust3r.heads.dpt_head import PixelwiseTaskWithDPT  # noqa
+from ..dust3r.dust3r.utils import path_to_croco  # noqa
+from ..dust3r.croco.models.blocks import Mlp  # noqa
 
 
 def reg_desc(desc, mode):
@@ -45,9 +45,11 @@ class Cat_MLP_LocalFeatures_DPT_Pts3d(PixelwiseTaskWithDPT):
     """
 
     def __init__(self, net, has_conf=False, local_feat_dim=16, hidden_dim_factor=4., hooks_idx=None, dim_tokens=None,
-                 num_channels=1, postprocess=None, feature_dim=256, last_dim=32, depth_mode=None, conf_mode=None, head_type="regression", **kwargs):
+                 num_channels=1, postprocess=None, feature_dim=256, last_dim=32, depth_mode=None, conf_mode=None,
+                 head_type="regression", **kwargs):
         super().__init__(num_channels=num_channels, feature_dim=feature_dim, last_dim=last_dim, hooks_idx=hooks_idx,
-                         dim_tokens=dim_tokens, depth_mode=depth_mode, postprocess=postprocess, conf_mode=conf_mode, head_type=head_type)
+                         dim_tokens=dim_tokens, depth_mode=depth_mode, postprocess=postprocess, conf_mode=conf_mode,
+                         head_type=head_type)
         self.local_feat_dim = local_feat_dim
 
         patch_size = net.patch_embed.patch_size
@@ -66,7 +68,7 @@ class Cat_MLP_LocalFeatures_DPT_Pts3d(PixelwiseTaskWithDPT):
 
         self.head_local_features = Mlp(in_features=idim,
                                        hidden_features=int(hidden_dim_factor * idim),
-                                       out_features=(self.local_feat_dim + self.two_confs) * self.patch_size**2)
+                                       out_features=(self.local_feat_dim + self.two_confs) * self.patch_size ** 2)
 
     def forward(self, decout, img_shape):
         # pass through the heads
